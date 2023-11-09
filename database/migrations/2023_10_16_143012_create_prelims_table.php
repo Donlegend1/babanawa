@@ -25,6 +25,8 @@ return new class extends Migration
             $table->string('address');
             $table->string('email');
             $table->string('gender');
+            $table->integer('amount_paid');
+            $table->integer('payment_status');
             $table->integer('state_id');
             $table->integer('lga_id');
             $table->string('phone');

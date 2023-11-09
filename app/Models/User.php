@@ -21,6 +21,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'telephone',
+        'school_id',
+        'role_id',
+
     ];
 
     /**
@@ -41,4 +45,31 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+  
+    
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    // Define the relationship with School
+    public function school()
+    {
+        return $this->belongsTo(School::class, 'school_id');
+    }
+
+    public function messagesSent()
+    {
+        return $this->hasMany(Message::class, 'user_id', 'id');
+    }
+
+    public function messagesReceived()
+    {
+        return $this->hasMany(Message::class, 'receiver_id', 'id');
+    }
+
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class, 'user_id', 'id');
+    }
 }

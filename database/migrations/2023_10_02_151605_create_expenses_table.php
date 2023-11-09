@@ -17,7 +17,12 @@ return new class extends Migration
             $table->id();
             $table->string('user_id');
             $table->string('expensestype_id');
+            $table->string('message_id');
+            $table->string('message_id');         
             $table->integer('amount');
+            $table->integer('qty');
+            $table->integer('unit_price');
+            $table->integer('status_id');   
             $table->timestamps();
         });
     }

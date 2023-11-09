@@ -7,5 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExpensesType extends Model
 {
-    use HasFactory;
+    protected $table = 'expense_types';
+    public function expenses()
+    {
+        return $this->hasMany('App\Expense', 'expensestype_id', 'id');
+    }
+    public function school()
+    {
+        return $this->belongsTo(School::class, 'school_id');
+    }
+
+    public function source()
+    {
+        return $this->belongsTo(PaidFor::class, 'source_id');
+    }
 }

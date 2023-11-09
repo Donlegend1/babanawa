@@ -9,7 +9,7 @@
         </li>
         <li id="full-view" class="d_none_sm"><i class="feather ft-maximize"></i></li>
         <li id="full-view-exit" class="d_none_sm"><i class="feather ft-minimize"></i></li>
-        <li class="dropdown">
+       {{--  <li class="dropdown">
             <i class="ti-bell dropdown-toggle" data-toggle="dropdown"><span></span></i>
             <div class="dropdown-menu bell-notify-box notify-box">
                 <span class="notify-title">You have 3 new notifications <a href="#">view all</a></span>
@@ -58,8 +58,8 @@
                     </a>
                 </div>
             </div>
-        </li>
-        <li class="dropdown">
+        </li> --}}
+       {{--  <li class="dropdown">
             <i class="fa fa-envelope-o dropdown-toggle" data-toggle="dropdown"><span></span></i>
             <div class="dropdown-menu notify-box nt-enveloper-box">
                 <span class="notify-title">You have 3 new Messages<a href="#">view all</a></span>
@@ -136,30 +136,10 @@
                     </a>
                 </div>
             </div>
-        </li>
+        </li> --}}
         <li class="settings-btn d_none_sm">
             <i class="ti-more"></i>
         </li>
-        <li class="user-dropdown">
-            <div class="dropdown">
-                <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="d_none_sm">Finance Manager<i class="ti-angle-down"></i></span>
-                    <img src="images/pic.jpeg" alt="" class="img-fluid">
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
-                    <a class="dropdown-item" href="#"><i class="ti-user"></i> Profile</a>
-                    <a class="dropdown-item" href="#"><i class="ti-settings"></i> Account Settings</a>
-                    <span role="separator" class="divider"></span>
-                    <a class="dropdown-item" href="#">
-                        
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="btn btn-danger ml-5"><i class="ti-power-off"></i>Logout</button>
-                               </form>
-                    
-                    </a>
-                </div>
-            </div>
-        </li>
+     
     </ul>
 </div>

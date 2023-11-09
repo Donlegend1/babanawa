@@ -16,6 +16,9 @@ return new class extends Migration
         Schema::create('expenses_types', function (Blueprint $table) {
             $table->id();
             $table->string("name");
+            $table->string("description");
+            $table->string("source_id");
+            $table->string("school_id");
             $table->timestamps();
         });
     }

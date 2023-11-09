@@ -7,8 +7,23 @@ use Illuminate\Http\Request;
 
 class BaseController extends Controller
 {
-    public function index()
+    public function index($stream, $type)
     {
-        return view("prelims.registration");
+
+        //return $stream;
+        return view("prelims.registration",[
+            'stream' => $stream,
+            'type' => $type
+        ]);
+    }
+    
+    
+    
+    
+     public function complete()
+    {
+
+        //return $stream;
+        return view("complete");
     }
 }

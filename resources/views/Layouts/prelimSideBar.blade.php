@@ -63,11 +63,23 @@
                     <li >
                         <a href="javascript:void(0)" aria-expanded="true">
                             <i class="feather ft-home"></i>
+                            <span>Users</span>
+                        </a>
+                        <ul class="collapse">
+                            <li><a href="/new-users"><i class="ti-layout-accordion-separated"></i><span>New User</span></a></li>
+                          
+                            <li><a href="/users"><i class="ti-layout-accordion-separated"></i><span>Users List</span></a></li>
+                        
+                        </ul>
+                    </li>
+                    <li >
+                        <a href="javascript:void(0)" aria-expanded="true">
+                            <i class="feather ft-home"></i>
                             <span>Expenses</span>
                         </a>
                         <ul class="collapse">
-                            <li><a href="/expenses"><i class="ti-alert"></i><span>Expenses List</span></a></li>
-                            <li><a href="/new-expenses"><i class="ti-layout-accordion-separated"></i><span>New Expenses</span></a></li>
+                            <li><a href="/expenses"><i class="ti-layout-accordion-separated"></i><span>Expenses</span></a></li>
+                          
                             <li><a href="/expenses-type"><i class="ti-layout-accordion-separated"></i><span>Expense Type</span></a></li>
                         
                         </ul>
