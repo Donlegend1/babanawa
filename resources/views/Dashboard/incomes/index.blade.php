@@ -30,10 +30,10 @@
 				<div class="card">
 					<div class="card-body">
 						<div class="text-right">
-							<button class="btn btn-primary" id="expense">Export to Excel</button>
+							<button class="btn btn-primary" id="exporincome">Export to Excel</button>
 
 						</div>
-						<h4 class="card_title">Expense List</h4>
+						<h4 class="card_title">Income List</h4>
 						<div class="single-table">
 
 						
@@ -53,18 +53,16 @@
 										@endforeach
 									</select>
 								</div>
-								<table id="expenseTable" class="table-hover progress-table table text-center">
+								<table id="income" class="table-hover progress-table table text-center">
 									<thead class="text-uppercase">
 										<tr>
 											<th scope="col">S/N</th>
-											<th scope="col">Expense Type</th>
-											<th scope="col">Sort Code</th>
+											<th scope="col">Reason</th>
 
-											<th scope="col">Description</th>
-											<th scope="col">Unit Price</th>
-											<th scope="col">Qunatity</th>
-
+											<th scope="col">Income Type</th>
 											<th scope="col">Amount</th>
+											<th scope="col">Paid By</th>
+
 
 											<th scope="col">Date</th>
 											<th scope="col">Action</th>
@@ -72,18 +70,19 @@
 										</tr>
 									</thead>
 									<tbody>
-										@foreach ($allExpenses as $expense)
+										@foreach ($incomes as $income)
 											<tr>
 												<th scope="row">{{ $loop->iteration }}</th>
-												<td>{{ $expense->expense_type_name }}</td>
-												<td>{{ $expense->sort_code }}</td>
+												<td>{{ $income->paymentType->name }}</td>
+												<td>{{ $income->for->name }}</td>
 
-												<td>{{ $expense->description }}</td>
-												<td>{{ number_format($expense->unit_price) }}</td>
-												<td>{{ $expense->qty }}</td>
-												<td>{{ number_format($expense->amount) }}</td>
+											
+											
+												<td>{{ number_format($income->AmountPaid) }}</td>
+												<td>{{ $income->firstName. ' '.$income->lastName }}</td>
 
-												<td>{{ Carbon\Carbon::parse($expense->created_at)->isoFormat('Do MMMM YYYY') }}
+
+												<td>{{ Carbon\Carbon::parse($income->created_at)->isoFormat('Do MMMM YYYY') }}
 												</td>
 
 												<td>
@@ -103,7 +102,7 @@
 													</ul>
 												</td>
 											</tr>
-											<div class="modal fade" id="editModal{{ $loop->iteration }}" tabindex="-1" role="dialog"
+											{{-- <div class="modal fade" id="editModal{{ $loop->iteration }}" tabindex="-1" role="dialog"
 												aria-labelledby="editModalLabel{{ $loop->iteration }}" aria-hidden="true">
 												<div class="modal-dialog">
 													<div class="modal-dialog">
@@ -155,10 +154,10 @@
 													</div>
 												</div>
 												<!-- Modal content for editing the current row -->
-											</div>
+											</div> --}}
 
 											<!-- Delete Modal for Current Row -->
-											<div class="modal fade" id="deleteModal{{ $loop->iteration }}" tabindex="-1" role="dialog"
+											{{-- <div class="modal fade" id="deleteModal{{ $loop->iteration }}" tabindex="-1" role="dialog"
 												aria-labelledby="deleteModalLabel{{ $loop->iteration }}" aria-hidden="true">
 												<div class="modal-dialog">
 													<div class="modal-content">
@@ -193,7 +192,7 @@
 														</form>
 													</div>
 												</div>
-											</div>
+											</div> --}}
 										@endforeach
 
 									</tbody>

@@ -158,7 +158,7 @@
                     </div>
                 @endif
 
-                <livewire:basic-informations />
+                <livewire:basic-informations :stream="$stream" :type="$type"/>
 
             </div>
         </div>

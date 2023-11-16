@@ -8,6 +8,9 @@ use App\Http\Controllers\BaseController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserController;
 use App\Http\Livewire\BasicInformations;
+use App\Http\Controllers\PaymentController;
+use Illuminate\Support\Facades\Artisan;
+
 
 
 
@@ -29,7 +32,12 @@ Auth::routes(['register' => false]);
 Route::get('/', function () {
     return view('auth.login');
 });
-
+Route::get('/clear', function() {
+Artisan::call('cache:clear');
+Artisan::call('config:cache');
+Artisan::call('view:clear');
+return "Cleared!";
+});
 
 
  
@@ -60,6 +68,12 @@ Route::post('/expenses', [ExpensesController::class, 'store'])->name('save_expen
 Route::post('/expenses-edit', [ExpensesController::class, 'update'])->name('edit_expense');
 Route::post('/expenses-delete', [ExpensesController::class, 'destroy'])->name('delete_expense');
 Route::get('/expenses/filter', [ExpensesController::class, 'filter']);
+Route::get('/graph/filter', [DashboardController::class, 'fetchData']);
+
+
+
+//incomes
+Route::get('/incomes', [PaymentController::class, 'index']);
 
 
 
@@ -78,8 +92,12 @@ Route::get('/messages', [MessageController::class, 'index']);
 Route::get('/messages-sent', [MessageController::class, 'sent']);
 Route::post('/messages-save', [MessageController::class, 'store'])->name("save-message");
 Route::get('/message/{id}', [MessageController::class, 'show']);
+Route::get('/message-inbox/{id}', [MessageController::class, 'inbox']);
+
 Route::post('/approve-message', [MessageController::class, 'approve']);
 Route::post('/decline-message', [MessageController::class, 'declineRecipient'])->name('declineRecipient');
+Route::post('/delegate-message', [MessageController::class, 'delegate'])->name('delegate');
+
 
 
 

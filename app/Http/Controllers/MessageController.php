@@ -65,16 +65,11 @@ class MessageController extends Controller
     public function store(StoreMessageRequest $request)
     {
 
-        // $request->validate([
-        //     'subject' => 'required|string|max:255',
-        //     'message' => 'required|string',
-        //     'recievers' => 'required|array|min:1', 
-        //     'cc' => 'nullable|array', 
-        //     'expense_type' => 'required|array',
-        //     'unit_price' => 'required|array',
-        //     'qty' => 'required|array',
-        //     'amount' => 'required|array',
-        // ]);
+        $request->validate([
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+            'recievers' => 'required|array|min:1', 
+        ]);
 
         // Get the last message_id from the database and increment it by one
        $lastMessageId = Message::max('id') ?? 0;
@@ -115,7 +110,7 @@ if ($request->has('cc')) {
 }
 
 // Assuming you want to save expenses related to this message
-if ($request->has('unit_price') && is_array($request->unit_price)) {
+if ($request->unit_price[0] !==NULL && is_array($request->unit_price)) {
     foreach ($request->unit_price as $key => $value) {
         $expense = new Expenses();
         $expense->unit_price = $request->unit_price[$key];
@@ -144,9 +139,20 @@ if ($request->has('unit_price') && is_array($request->unit_price)) {
         $message = Message::with('sender', 'recipients.user', 'expenses.expenseType')
         ->where('id', $id) // Assuming 'id' is the primary key of the messages table
         ->first();
-      
+        $users= User::where('school_id', Auth::user()->school_id)->get();
     //  dd($message);
-        return view("messages.single", compact("message"));
+        return view("messages.single", compact("message", "users"));
+    }
+    public function inbox(Message $message, $id)
+    {
+        // dd($id);
+        $message = Message::with('sender', 'recipients.user', 'expenses.expenseType')
+        
+        ->where('id', $id) // Assuming 'id' is the primary key of the messages table
+            ->first();
+        $users = User::where('school_id', Auth::user()->school_id)->get();
+        //  dd($message);
+        return view("messages.inbox", compact("message", "users"));
     }
 
     /**
@@ -196,9 +202,9 @@ if ($request->has('unit_price') && is_array($request->unit_price)) {
 
     function approve(Request $request)
     {
+        
         $messageRecipient = Message_recipient::where('message_id', $request->message_id)
             ->where('user_id', Auth::user()->id)
-            ->where('recipient_status', 0) // Assuming '0' represents pending approval
             ->first();
             // dd($messageRecipient);
 
@@ -238,5 +244,20 @@ if ($request->has('unit_price') && is_array($request->unit_price)) {
         } else {
             return redirect()->back()->with("error", "Recipient not found or you don't have permission to decline this recipient");
         }
+    }
+    public function delegate(Request $request)
+    {
+        $delegate_message
+            = Message_recipient::
+            where('user_id', Auth::user()->id)
+            ->where('message_id', $request->message_id)
+            ->first();
+            // dd($delegate_message);
+
+        $delegate_message->user_id= $request->user_id;
+        $delegate_message->recipient_status = 3;
+        $delegate_message->save();
+        
+        return redirect('/messages')->with('msg', 'message delegated');
     }
 }

@@ -8,6 +8,11 @@ use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\ExpensesType;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
+
+
 
 
 use Livewire\Component;
@@ -19,6 +24,8 @@ class Dashboard extends Component
 
     public function render()
     {
+       
+        
         $query = Prelims::query();
 
         if ($this->selectedPeriod === 'day') {
@@ -35,10 +42,11 @@ class Dashboard extends Component
             $query->whereYear('prelims.created_at', now()->year);
         }
 
-        // Fetch expenses based on the selected period
+        //application expenses
         $expensesQuery = Expenses::query();
         // Apply filters based on selected period for expenses
-        if ($this->selectedPeriod === 'day') {
+        if ($this->selectedPeriod === 'day'
+        ) {
             $expensesQuery->whereDate('expenses.created_at', now()->toDateString());
         } elseif ($this->selectedPeriod === 'week') {
             $expensesQuery->whereBetween('expenses.created_at', [now()->subDays(6)->toDateString(), now()->toDateString()]);
@@ -47,68 +55,134 @@ class Dashboard extends Component
         } elseif ($this->selectedPeriod === 'year') {
             $expensesQuery->whereYear('expenses.created_at', now()->year);
         }
+        $allexpenses= $expensesQuery->with('expenseType')->paginate(10);
+        
+        // Add condition for expensetype.source == 1
+        $expensesQuery->whereHas('expenseType', function ($query) {
+            $query->where('source_id', 1)->where("school_id", Auth::user()->school_id);
+        });
+
+        // Fetch the expenses with their types
+        $expenses = $expensesQuery->with('expenseType')->get();
+        // dd($expenses);
+
+        $totalapplication_expense = $expenses->sum("amount");
+
+        //school expenses
+        $school_feesexpenses = Expenses::query();
+        // Apply filters based on selected period for expenses
+        if (
+            $this->selectedPeriod === 'day'
+        ) {
+            $school_feesexpenses->whereDate('expenses.created_at', now()->toDateString());
+        } elseif ($this->selectedPeriod === 'week') {
+            $school_feesexpenses->whereBetween('expenses.created_at', [now()->subDays(6)->toDateString(), now()->toDateString()]);
+        } elseif ($this->selectedPeriod === 'month') {
+            $school_feesexpenses->whereMonth('expenses.created_at', now()->month);
+        } elseif ($this->selectedPeriod === 'year') {
+            $school_feesexpenses->whereYear('expenses.created_at', now()->year);
+        }
+
+        // Add condition for expensetype.source == 1
+        $school_feesexpenses->whereHas('expenseType', function ($query) {
+            $query->where('source_id', 2)->where("school_id", Auth::user()->school_id);
+        });
+
+        // Fetch the expenses with their types
+        $allschool_feesexpenses = $school_feesexpenses->get();
+        $totalallschool_feesexpenses = $allschool_feesexpenses->sum("amount");
 
 
-        // Fetch expenses based on the selected period
-        //$payments = Payment::query();
-        $payments = Payment::query()->where("paid_for_id", 1);
+        //Contribution expenses
+        $contributionexpenses = Expenses::query();
+        // Apply filters based on selected period for expenses
+        if (
+            $this->selectedPeriod === 'day'
+        ) {
+            $contributionexpenses->whereDate('expenses.created_at', now()->toDateString());
+        } elseif ($this->selectedPeriod === 'week') {
+            $contributionexpenses->whereBetween('expenses.created_at', [now()->subDays(6)->toDateString(), now()->toDateString()]);
+        } elseif ($this->selectedPeriod === 'month') {
+            $contributionexpenses->whereMonth('expenses.created_at', now()->month);
+        } elseif ($this->selectedPeriod === 'year') {
+            $contributionexpenses->whereYear('expenses.created_at', now()->year);
+        }
+
+        // Add condition for expensetype.source == 1
+        $contributionexpenses->whereHas('expenseType', function ($query) {
+            $query->where('source_id', 3)->where("school_id", Auth::user()->school_id);
+        });
+
+        // Fetch the expenses with their types
+        $allcontributionexpenses = $contributionexpenses->get();
+        $totalallcontributionexpenses = $allcontributionexpenses->sum("amount");
+
+        
+
+
+
+        //application fees
+        $application_fees = Payment::query()->where('school_id', Auth::user()->school_id);
         // Apply filters based on selected period for expenses
         if ($this->selectedPeriod === 'day') {
-            $payments->whereDate('payments.date', now()->toDateString());
+            $application_fees->whereDate('payments.created_at', now()->toDateString());
         } elseif ($this->selectedPeriod === 'week') {
-            $payments->whereBetween('payments.date', [now()->subDays(6)->toDateString(), now()->toDateString()]);
+            $application_fees->whereBetween('payments.created_at', [now()->subDays(6)->toDateString(), now()->toDateString()]);
         } elseif ($this->selectedPeriod === 'month') {
-            $payments->whereMonth('payments.date', now()->month);
+            $application_fees->whereMonth('payments.created_at', now()->month);
         } elseif ($this->selectedPeriod === 'year') {
-            $payments->whereYear('payments.date', now()->year);
+            $application_fees->whereYear('payments.created_at', now()->year);
         }
+        $fees = $application_fees->where('paid_for_id', 1)->get();
 
-        $paymentsdata= $payments->paginate(10);
-        $Totalsum = $payments->get();
+        $paymentsdata= $application_fees->with('for', 'paymentType')->where("school_id", Auth::user()->school_id)->paginate(10);
+        // dd($paymentsdata);
+
+        $totalapplication_fees= $fees->sum("AmountPaid");
+
+
+        //school fees 
+        $school_fees = Payment::query()->where('school_id', Auth::user()->school_id);
+        // Apply filters based on selected period for expenses
+        if ($this->selectedPeriod === 'day') {
+            $school_fees->whereDate('payments.created_at', now()->toDateString());
+        } elseif ($this->selectedPeriod === 'week') {
+            $school_fees->whereBetween('payments.created_at', [now()->subDays(6)->toDateString(), now()->toDateString()]);
+        } elseif ($this->selectedPeriod === 'month') {
+            $school_fees->whereMonth('payments.created_at', now()->month);
+        } elseif ($this->selectedPeriod === 'year') {
+            $school_fees->whereYear('payments.created_at', now()->year);
+        }
+        $schoolfees = $school_fees->where('paid_for_id', 2)->get();
 
        
 
-       $totalIncome= $Totalsum->sum("AmountPaid");
 
+        $totalschool_fees = $schoolfees->sum("AmountPaid");
 
-       $expenses = $expensesQuery
-        ->join('expense_types', 'expenses.expenses_type_id', '=', 'expense_types.id')
-        ->select('expenses.*', 'expense_types.name as expense_type_name', 'expenses.description as description', 'expense_types.sort_code as sort_code')
-        ->paginate(10);
-        $Totalexpenses = $expensesQuery
-        ->get();
-
-        $sumexpen= $Totalexpenses->sum("amount");
-        // Collect dates from both expenses and payments and sort them chronologically
-        $dates = [];
-        foreach ($expenses as $expense) {
-            $dates[] = Carbon::parse($expense->created_at)->isoFormat('Do MMMM YYYY');
+        //contribution
+        $contribution = Payment::query()->where('school_id', Auth::user()->school_id);
+        // Apply filters based on selected period for expenses
+        if ($this->selectedPeriod === 'day') {
+            $contribution->whereDate('payments.created_at', now()->toDateString());
+        } elseif ($this->selectedPeriod === 'week') {
+            $contribution->whereBetween('payments.created_at', [now()->subDays(6)->toDateString(), now()->toDateString()]);
+        } elseif ($this->selectedPeriod === 'month') {
+            $contribution->whereMonth('payments.created_at', now()->month);
+        } elseif ($this->selectedPeriod === 'year') {
+            $contribution->whereYear('payments.created_at', now()->year);
         }
-        foreach ($paymentsdata as $payment) {
-            $dates[] = Carbon::parse($payment->date)->isoFormat('Do MMMM YYYY');
-        }
-        sort($dates);
+        $contributions = $contribution->where('paid_for_id', 3)->get();
 
-        // Construct the $data variable with corresponding expenses and payments for each date
-        $data = "";
-        foreach ($dates as $date) {
-            $expenseAmount = 0;
-            foreach ($expenses as $expense) {
-                if (Carbon::parse($expense->created_at)->isoFormat('Do MMMM YYYY') === $date) {
-                    $expenseAmount += $expense->amount;
-                }
-            }
-            $paymentAmount = 0;
-            foreach ($paymentsdata as $payment) {
-                if (Carbon::parse($payment->date)->isoFormat('Do MMMM YYYY') === $date) {
-                    $paymentAmount += $payment->AmountPaid;
-                }
-            }
-            $data .= "['" . $date . "', " . $paymentAmount  . ", " . $expenseAmount . "],";
-        }
-
-        // Remove the trailing comma
        
+        $totalcontributions = $contributions->sum("AmountPaid");
+
+        // Log::info('End Date: ' . $totalapplication_fees);
+
+
+
+   
+      
       
 
         $totalRemmedials = $query->sum('amount_paid');
@@ -118,12 +192,16 @@ class Dashboard extends Component
         return view('livewire.dashboard', [
             'totalRem' => $totalRemmedials,
             'allrem' => $allRem,
-            'expenses' => $expenses,
-            'totalIncome'=> $totalIncome,
-            'data' => $data,
+            'expenses' => $allexpenses,
+            'totalapplication_fees'=> $totalapplication_fees, 
+            'totalschool_fees'=> $totalschool_fees,
+            'totalcontributions'=> $totalcontributions,
+            'totalapplication_expense'=> $totalapplication_expense,
+            'totalallschool_feesexpenses' => $totalallschool_feesexpenses,
+            'totalallcontributionexpenses' => $totalallcontributionexpenses,
+    
             'paymentsdata'=> $paymentsdata,
-            'sumexpen'=> $sumexpen,
-            'expensesType'=> $expensesType
+            'expensesType'=> $expensesType,
             
         ]);
     }

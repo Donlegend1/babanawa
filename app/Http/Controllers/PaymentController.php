@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Payment;
 use App\Http\Requests\StorePaymentRequest;
 use App\Http\Requests\UpdatePaymentRequest;
+use App\Models\ExpensesType;
+use App\Models\PaidFor;
+use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
 {
@@ -15,7 +18,11 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        //
+        $incomes = Payment::with("for", "paymentType")->where("school_id", Auth::user()->school_id)->get();
+        $expensesType=PaidFor::all();
+// dd($incomes);
+        
+        return view('Dashboard.incomes.index', compact('incomes', 'expensesType'));
     }
 
     /**

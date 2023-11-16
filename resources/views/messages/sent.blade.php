@@ -33,7 +33,7 @@
                                         <tbody>
                                             @foreach ($messages as $message )
                                                
-                                            <tr class="unread" id="mail_msg_1" onclick="window.location='/message/{{$message->message->id}}';" style="cursor: pointer;">
+                                            <tr class="unread" id="mail_msg_1" onclick="window.location='/message/{{$message->id}}';" style="cursor: pointer;">
                                                 <td class="">
                                                     <div class="custom-control custom-checkbox primary-checkbox">
                                                         {{$loop->iteration}}
@@ -43,7 +43,7 @@
                                                 <td class="">
                                                     <div class="star"><i class="fa fa-star-o icon-accent"></i></div>
                                                 </td>
-                                                <td class="open-view">{{"John Smith"}}</td>
+                                                
                                                 <td class="open-view">
                                                     @if ($message->status_id===1)
                                                     <span class="label label-primary mr-2">Approved</span>&nbsp;

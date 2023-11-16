@@ -1,9 +1,4 @@
-@extends('Layouts.app')
-@section('content')
-	<div class="page-container">
-		@include('Layouts.sidebar')
-
-		<div class="main-content-inner">
+<div class="main-content-inner">
 			<div class="row">
 				<div class="col-lg-12 mb-4">
 					<div class="card">
@@ -87,4 +82,3 @@
 				</div>
 			</div>
 		</div>
-	@endsection

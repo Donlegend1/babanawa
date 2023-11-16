@@ -36,6 +36,7 @@ class ExpensesController extends Controller
 
         $allExpenses = DB::table('expenses')
         ->join('expense_types', 'expenses.expenses_type_id', '=', 'expense_types.id')
+        ->where('expense_types.school_id', '=', Auth::user()->school_id)
         ->select('expenses.*', 'expense_types.name as expense_type_name', 'expenses.description as description', 'expense_types.sort_code as sort_code')
         ->get();
        

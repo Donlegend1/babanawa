@@ -30,6 +30,8 @@ class BasicInformations extends Component
     use WithFileUploads;
     public $currentStep = 1;
     public $img;
+    public $stream;
+    public $type;
 
     public $resultType = 0;
     public $reference;
@@ -76,43 +78,32 @@ class BasicInformations extends Component
     public $subjects=[];
     public $selectedSubjects = [];
     public $selectedGrade = [];
+   
 
 
 
 
     public function mount()
     {
+   
         // Get all public properties of the component
         $properties = get_object_vars($this);
 
 
         // Store all properties in the session
         foreach ($properties as $property => $value) {
-            // Exclude non-public properties and Livewire-specific properties
-            // if (!Str::startsWith($property, '_') && $property !== 'errors' && $property !== 'redirectTo') {
+        
                 session([$property => $value]);
-            // }
         }
-        // // Retrieve values from session and set them to the Livewire properties.
-        // $this->subject1 = session('subject1');
-        // $this->subject2 = session('subject2');
-        // $this->subject3 = session('subject3');
-        // session([
-        //     'enggrade' => $this->enggrade,
-        //     'subject' => $this->subject,
-        //     'grade' => $this->grade,
-        //     // ... (store other properties in session)
-        // ]);
+    
         $this->preliamount =   DB::table("settings")->first()->PrelimFee;
        
     }
-
+  
   public function __construct() {
         $this->stateOptions = State::all();
    
     }
-
-   
 
    
 
@@ -125,6 +116,7 @@ class BasicInformations extends Component
 
     public function render()
     {
+        
         return view('livewire.basic-informations');
     }
     public function updatedSubject1($value)
@@ -175,8 +167,16 @@ class BasicInformations extends Component
     public function updatedJsceresult()
     {
         // Handle file upload and store data in session
+    
         if ($this->jsceresult) {
-            // Store file data in session as base64 encoded string
+            $properties = get_object_vars($this);
+
+
+            // Store all properties in the session
+            foreach ($properties as $property => $value) {
+
+                session([$property => $value]);
+            }
             session(['jsceresult' => base64_encode(file_get_contents($this->jsceresult->getRealPath()))]);
         }
     }
@@ -221,6 +221,7 @@ class BasicInformations extends Component
         if ($this->currentStep < 3) {
             $this->validateCurrentStep();
             $this->currentStep++;
+            
            
         }
        
@@ -254,7 +255,10 @@ class BasicInformations extends Component
     public function noresult()
     {
         $this->resultType = 3;
+        $this->mount();
        $this->nextStep();
+      
+       
     }
     
 
@@ -328,7 +332,9 @@ class BasicInformations extends Component
                  $passportPath = null;
                  $jsceresultPath = null;
                  $passport= $sessionData['passport'];
-                  $jsceresult = $sessionData['jsceresult'];
+                $jsceresult = $sessionData['jsceresult'];
+              
+
                  
  
                  // Handle file uploads and resize images
@@ -392,24 +398,26 @@ class BasicInformations extends Component
                  $prelim->state_id = $sessionData['state'];
                  $prelim->lga_id = $sessionData['lga'];
                  $prelim->payment_status = 1;
-                 $prelim->amount_paid = $sessionData['lga'];
- 
+                 $prelim->amount_paid = $sessionData['preliamount'];
+                $prelim->admission_type = $sessionData['type'];
+                $prelim->stream = $sessionData['stream'];
+    
                  $prelim->phone = $sessionData['phone'];
  
-                //  if ($sessionData['resultType === 1']) {
-                //      $prelim->resultType = "SSCE";
-                //  }
-                //  if ($sessionData['resultType === 2']) {
-                //      $prelim->resultType = "JSCE";
-                //  }
-                //  if ($sessionData['resultType === 3']) {
-                //      $prelim->resultType = "No Result";
-                //  }
+                 if ($sessionData['resultType'] ===1) {
+                     $prelim->resultType = "SSCE";
+                 }
+                 if ($sessionData['resultType']===2) {
+                     $prelim->resultType = "JSCE";
+                 }
+                 if ($sessionData['resultType']===3) {
+                     $prelim->resultType = "No Result";
+                 }
                  $prelim->save();
  
                  
                  $payment = new Payment();
-                 $payment->AmountPaid = 3000;
+                 $payment->AmountPaid = $sessionData['preliamount'];
                  $payment->reference = $reference;
                  $payment->user_id = $prelim->id;
                  $payment->firstName = $prelim->firstname;

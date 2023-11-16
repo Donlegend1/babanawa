@@ -76,7 +76,7 @@ class UserController extends Controller
                     'telephone' => $request->input('telephone'),
                     'school_id' => $request->input('school_id'),
                     'role_id' => $request->input('role_id'),
-                    'password' => Hash::make($request->input('name')),
+                    'password' => Hash::make($request->input('password')),
                 ]);
                 return redirect('/users')->with("message", "User Created Successfully");
 
